@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ThatStella7922
-ver="2023.314.1"
+ver="2023.315.0"
 
 # colors
 usecolors="true"
@@ -57,6 +57,9 @@ installAzule () {
     fi #check if azule is there and if so delete it
     mv Azule-main/ ~/Applications/
     rm -rf temp
+    if [[ ! -d /usr/local/bin ]]; then
+        sudo mkdir /usr/local/bin
+    fi #check if /usr/local/bin exists and if not, make the folder
     sudo ln -sf ~/Applications/Azule-main/azule /usr/local/bin/azule
     if [[ $? == "0" ]]; then
         echo -e "$info Azule installed succesfully. (symlinked to /usr/local/bin/azule)"
