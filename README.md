@@ -10,6 +10,11 @@ See available arguments by running with `-h`.
 ./Variscite.sh -h
 ```
 
+An example of quick usage in non-interactive mode is as follows:
+```sh
+./Variscite.sh -s1 -i/Users/Stella/Downloads/MyApp.ipa -d/Users/Stella/Downloads/MyDylib.dylib -o/Users/Stella/Desktop/
+```
+
 ## Compatibility and Dependencies
 Variscite is designed to be lightweight and as such uses standard bash-isms, with as few external binaries as possible. The only external dependency is [Azule](https://github.com/Al4ise/Azule), which Variscite installs during execution.
 
