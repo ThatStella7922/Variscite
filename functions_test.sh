@@ -1,8 +1,16 @@
 #!/bin/bash
 
-# Variscite - by ThatStella7922
+# Variscite Functions_Test - by ThatStella7922
 # Shoutout to crystall1nedev, my beloved
 ver="2023.315.1"
+
+##################################################################################################
+##################################################################################################
+####                                                                                          ####
+####   This is a testing file. Commands will be added and removed at random from this file.   ####
+####                                                                                          ####
+##################################################################################################
+##################################################################################################
 
 # colors
 usecolors="true"
@@ -23,7 +31,7 @@ if [[ usecolors == "false" ]]; then
 fi
 
 # init message
-echo -e "$init Variscite $ver"
+echo -e "$init Variscite Functions_Test $ver"
 echo -e "$init https://github.com/ThatStella7922/Variscite"
 echo
 
@@ -205,31 +213,16 @@ patchIpa () {
 }
 
 showHelp () {
-    echo -e "$help Variscite is a tool that lets you easily inject a library (dylib) into an iOS app archive (IPA file)."
-    echo -e "$help This is usually used to modify apps for enhanced functionality or changing features."
-    echo -e "$help"
-    echo -e "$help Variscite Arguments"
-    echo -e "$help -h or --h   Show this help."
-    echo -e "$help -iA or --iA Install Azule and exit. May prompt for password during sudo."
-    echo -e "$help -uA or --uA Uninstall Azule and exit. May prompt for password during sudo."
-    echo -e "$help"
-    echo -e "$help -s1         Enable non-interactive mode. Requires specifying arguments."
-    echo -e "$help -i[path]    Specify an IPA file. Example: -i/Users/Stella/Downloads/SomeApp.ipa"
-    echo -e "$help -d[path]    Specify a dylib. Example: -d/Users/Stella/Downloads/SomeLibrary.dylib"
-    echo -e "$help -o[path]    Specify an output path. Example: -o/Users/Stella/Downloads/"
-    echo -e "$help"
-    echo -e "$help Variscite Behavior"
-    echo -e "$help If -s1 isn't passed, Variscite will run in interactive mode using options in -i, -d and -o."
-    echo -e "$help If one of those three arguments wasn't passed, Variscite will prompt during execution."
-    echo -e "$help"
-    echo -e "$help If -s1 is passed, Variscite will run in non-interactive mode using options in -i, -d and -o."
-    echo -e "$warn If any one of those three arguments is missing, Variscite will error out and exit."
-    echo -e "$help"
-    echo -e "$help Good to Know"
-    echo -e "$warn If Azule isn't installed and -s1 is passed, Variscite will error out and exit."
+    echo -e "##################################################################################################"
+    echo -e "##################################################################################################"
+    echo -e "####                                                                                          ####"
+    echo -e "####   This is a testing file. Commands will be added and removed at random from this file.   ####"
+    echo -e "####   Use argument syntax from Variscite.                                                    ####"
+    echo -e "####                                                                                          ####"
+    echo -e "##################################################################################################"
+    echo -e "##################################################################################################"
 }
 ### End of functions
-
 
 ### Start code
 # Check for help argument
@@ -274,62 +267,51 @@ do
   esac
 done
 
+# Start Test
+echo -e "$init Beginning validation functions test"
+echo -e "$info Got IPA file: $ipafile"
+echo -e "$info Got dylib: $dylib"
+echo -e "$info Got output path: $outpath"
+echo "------------------------------------"
+echo -e "$info validateIpa:"
 
-# Non-interactive mode execution
-if [[ $silent == "1" ]]; then
-    echo -e "$init Running in non-interactive mode"
-    if [[ -z $ipafile ]] || [[ -z $dylib ]] || [[ -z $outpath ]]; then
-        echo -e "$error Missing arguments. Non-interactive mode cannot continue."
-        echo -e "$info Specified IPA: $ipafile"
-        echo -e "$info Specified dylib: $dylib"
-        echo -e "$info Specified output path: $outpath"
-        exit 1
-    else
-        nonInteractiveAzuleCheck true
-        if [[ $? == "0" ]]; then
-            validateIpa $ipafile;iparesult=$?
-            validateDylib $dylib;dylibresult=$?
-            validatePath $outpath;pathresult=$?
-            # check if all passed files and paths are valid
-            if [[ $iparesult == "1" ]] || [[ $dylibresult == "1" ]] || [[ $pathresult == "1" ]]; then
-                echo -e "$error One of the selected input files or output path is bad."
-                echo -e "$info Specified IPA: $ipafile - Bad: $iparesult"
-                echo -e "$info Specified dylib: $dylib - Bad: $dylibresult"
-                echo -e "$info Specified output path: $outpath - Bad: $pathresult"
-                exit 1
-            else
-                echo -e "$info Running Azule now..."
-                patchIpa $ipafile $dylib $outpath
-                if [[ $? == "0" ]]; then
-                    echo -e "$success Azule finished patching the IPA file."
-                    exit 0
-                else
-                    echo -e "$error There was a problem while patching the IPA file. Please see above."
-                    exit 1
-                fi
-            fi
-        else
-            # Error message from no Azule was triggered in the above call to nonInteractiveAzuleCheck
-            exit 1
-        fi
-    fi
+validateIpa $ipafile true
+if [[ $? == "0" ]]; then
+    echo -e "$info IPA is valid! (Interactive)"
+else
+    echo -e "$error IPA is invalid! (Interactive)"
 fi
 
-
-# Interactive mode execution
-# Check for azule
-if [ ! -f "$(which azule)" ]; then
-    echo -e "$error Variscite couldn't locate Azule. If it's already installed, make sure that it's in the PATH."
-    echo -e "$question Variscite can download and install Azule if you want to."
-    read -p "$(echo -e "$question Install Azule? y/n: ")" -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]];then
-        installAzule
-    else
-        echo -e "$error Cannot continue without Azule."
-        echo -e "$info You can manually install it from https://github.com/Al4ise/Azule/wiki"
-        exit 1
-    fi
+validateIpa $ipafile
+if [[ $? == "0" ]]; then
+    echo -e "$info IPA is valid!"
+else
+    echo -e "$error IPA is invalid!"
 fi
 
-echo -e "$init Interactive mode is currently not implemented. Please run with -h for help with non-interactive mode."
+echo "------------------------------------"
+echo -e "$info validateDylib:"
+
+validateDylib $dylib true
+if [[ $? == "0" ]]; then
+    echo -e "$info dylib is valid! (Interactive)"
+else
+    echo -e "$error dylib is invalid! (Interactive)"
+fi 
+
+validateDylib $dylib
+if [[ $? == "0" ]]; then
+    echo -e "$info dylib is valid!"
+else
+    echo -e "$error dylib is invalid!"
+fi
+
+echo "------------------------------------"
+echo -e "$info validatePath:"
+
+validatePath $outpath
+if [[ $? == "0" ]]; then
+    echo -e "$info Path is valid!"
+else
+    echo -e "$error Path is invalid!"
+fi
