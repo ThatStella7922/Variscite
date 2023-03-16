@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# ThatStella7922
-ver="2023.315.0"
+# Variscite - by ThatStella7922
+# Shoutout to crystall1nedev, my beloved
+ver="2023.315.1"
 
 # colors
 usecolors="true"
@@ -27,25 +28,74 @@ echo -e "$init https://github.com/ThatStella7922/Variscite"
 echo
 
 ### Functions
+# Checks for Azule and doesn't prompt for installation. Returns 1 if Azule not found, else returns 0.
+# Call with true to make it print an error.
+nonInteractiveAzuleCheck () {
+    if [[ ! -f "$(which azule)" ]]; then
+        if [[ $1 == "true" ]]; then
+            echo -e "$error Variscite couldn't locate Azule. If it's already installed, make sure that it's in the PATH."
+            echo -e "$error Cannot continue without Azule."
+            echo -e "$info You can manually install it from https://github.com/Al4ise/Azule/wiki"
+            return 1
+        else
+            return 1
+        fi
+    else
+        return 0
+    fi
+}
+
+# Checks for curl and doesn't prompt for installation. Returns 1 if curl not found, else returns 0.
+# Call with true to make it print an error.
+nonInteractiveCurlCheck () {
+    if [[ ! -f "$(which curl)" ]]; then
+        if [[ $1 == "true" ]]; then
+            echo -e "$error Variscite couldn't locate curl. If it's already installed, make sure that it's in the PATH."
+            echo -e "$error Cannot continue without curl."
+            echo -e "$info curl should be available at your nearest package manager."
+            return 1
+        else
+            return 1
+        fi
+    else
+        return 0
+    fi
+}
+
 # downloadGh - Specify a URL when calling like "downloadGh https://test.com/file.txt"
 downloadGh () {
-    curl -LJO --progress-bar $1
-    res=$?
-    if test "$res" != "0"; then
-        echo -e "$error curl failed with: $res"
-        exit $res
+    nonInteractiveCurlCheck true
+    if [[ $? == "0" ]]; then
+        curl -LJO --progress-bar $1
+        res=$?
+        if test "$res" != "0"; then
+            echo -e "$error curl failed with: $res"
+            exit $res
+        fi
+    else
+        exit 1
+    fi
+}
+
+# downloadAzule"
+downloadAzule () {
+    nonInteractiveCurlCheck true
+    if [[ $? == "0" ]]; then
+        curl -LJ#o azule.zip https://github.com/Al4ise/Azule/archive/refs/heads/main.zip
+        res=$?
+        if test "$res" != "0"; then
+            echo -e "$error curl failed with: $res"
+            exit $res
+        fi
+    else
+        exit 1
     fi
 }
 
 installAzule () {
     echo -e "$info Downloading Azule..."
     rm -rf temp 2> /dev/null;mkdir temp;cd temp
-    curl -LJ#o azule.zip https://github.com/Al4ise/Azule/archive/refs/heads/main.zip
-    res=$?
-    if test "$res" != "0"; then
-        echo -e "$error curl failed with: $res"
-        exit $res
-    fi
+    downloadAzule
     echo -e "$info Unpacking Azule..."
     unzip -q azule.zip;rm azule.zip
     echo -e "$info Installing Azule (this may require your password)..."
@@ -86,23 +136,6 @@ uninstallAzule () {
     else
         echo -e "$error Uninstallation failed with code $?"
         exit $?
-    fi
-}
-
-# Checks for Azule and doesn't prompt for installation. Returns 1 if Azule not found, else returns 0.
-# Call with true to make it print an error.
-nonInteractiveAzuleCheck () {
-    if [[ ! -f "$(which azule)" ]]; then
-        if [[ $1 == "true" ]]; then
-            echo -e "$error Variscite couldn't locate Azule. If it's already installed, make sure that it's in the PATH."
-            echo -e "$error Cannot continue without Azule."
-            echo -e "$info You can manually install it from https://github.com/Al4ise/Azule/wiki"
-            return 1
-        else
-            return 1
-        fi
-    else
-        return 0
     fi
 }
 
@@ -212,8 +245,8 @@ if [[ $1 == "-uA"* ]] || [[ $1 == "--uA"* ]]; then
         uninstallAzule
         exit $?
     else
-        echo -e "$info Couldn't find Azule, it has likely already been uninstalled!"
-    exit $?
+        echo -e "$error Couldn't find Azule, it has likely already been uninstalled!"
+        exit $?
     fi
 fi
 
@@ -256,16 +289,16 @@ if [[ $silent == "1" ]]; then
                 echo -e "$info Running Azule now..."
                 patchIpa $ipafile $dylib $outpath
                 if [[ $? == "0" ]]; then
-                    echo -e "$success Azule finished patching the IPA file"
+                    echo -e "$success Azule finished patching the IPA file."
                     exit 0
                 else
-                    echo -e "$error SHITS FUCKED"
+                    echo -e "$error There was a problem while patching the IPA file. Please see above."
                     exit 1
                 fi
             fi
         else
             # Error message from no Azule was triggered in the above call to nonInteractiveAzuleCheck
-            exit
+            exit 1
         fi
     fi
 fi
