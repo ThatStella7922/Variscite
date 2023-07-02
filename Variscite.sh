@@ -340,7 +340,6 @@ showHelp () {
 }
 ### End of functions
 
-
 ### Start code
 ## Make Variscite stop execution on jailbroken iOS
 ## Why? I don't know how to handle rootless, as this was only tested on rootfull and fakefs.
@@ -439,7 +438,10 @@ fi
 
 ### Interactive mode execution
 # Check what we are running on
-if [ checkAreWeOnMac ]; then
+checkAreWeOnMac;macoscheck=$?
+checkAreWeOnJbIos;ioscheck=$?
+checkAreWeOnLinux;linuxcheck=$?
+if [[ "$macoscheck" == "0" ]]; then
     # we are on macOS, check for xcode clt
     nonInteractiveXcodeCltCheck
     if [[ $? == "1" ]]; then
@@ -472,7 +474,7 @@ if [ checkAreWeOnMac ]; then
 
     # i think that's it idk i'm kinda sleepy if i'm going to be honest
 
-elif [ checkAreWeOnJbIos ]; then
+elif [[ "$ioscheck" == "0" ]]; then
     nonInteractiveCurlCheck
     if [[ $? == "1" ]]; then
         echo -e "$warn Variscite couldn't locate curl. If it's already installed, make sure that it's in the PATH."
@@ -490,7 +492,7 @@ elif [ checkAreWeOnJbIos ]; then
     fi
     # was goign to do more stuff here but ios is not supported
     
-elif [ checkAreWeOnLinux ]; then
+elif [[ "$linuxcheck" == "0" ]]; then
     nonInteractiveCurlCheck
     if [[ $? == "1" ]]; then
         echo -e "$warn Variscite couldn't locate curl. If it's already installed, make sure that it's in the PATH."
