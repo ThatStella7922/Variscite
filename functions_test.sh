@@ -36,14 +36,15 @@ echo -e "$init https://github.com/ThatStella7922/Variscite"
 echo
 
 ### Functions
-# Checks for Azule and doesn't prompt for installation. Returns 1 if Azule not found, else returns 0.
+## Checks for Azule and doesn't prompt for installation. Returns 1 if Azule not found, else returns 0.
 # Call with true to make it print an error.
 nonInteractiveAzuleCheck () {
     if [[ ! -f "$(which azule)" ]]; then
         if [[ $1 == "true" ]]; then
             echo -e "$error Variscite couldn't locate Azule. If it's already installed, make sure that it's in the PATH."
             echo -e "$error Cannot continue without Azule."
-            echo -e "$info You can manually install it from https://github.com/Al4ise/Azule/wiki"
+            echo -e "$info Variscite can install Azule for you - Run Variscite with -h to learn more."
+            echo -e "$info Alternatively, you can manually install it at https://github.com/Al4ise/Azule/wiki."
             return 1
         else
             return 1
@@ -53,35 +54,56 @@ nonInteractiveAzuleCheck () {
     fi
 }
 
-# Checks for curl and doesn't prompt for installation. Returns 1 if curl not found, else returns 0.
+## Checks for the Xcode command line tools and doesn't prompt for installation. Returns 1 if Xcode not found, else returns 0.
 # Call with true to make it print an error.
-nonInteractiveCurlCheck () {
-    if [[ ! -f "$(which curl)" ]]; then
+nonInteractiveXcodeCltCheck () {
+    if ! xcode-select -p 1>/dev/null; then
         if [[ $1 == "true" ]]; then
-            echo -e "$error Variscite couldn't locate curl. If it's already installed, make sure that it's in the PATH."
-            echo -e "$error Cannot continue without curl."
-            echo -e "$info curl should be available at your nearest package manager."
+            echo -e "$error Variscite couldn't locate the Xcode Command Line Tools."
+            echo -e "$info You can install them manually by running xcode-select --install"
             return 1
         else
             return 1
         fi
     else
+        # good to go
         return 0
     fi
 }
 
-# downloadGh - Specify a URL when calling like "downloadGh https://test.com/file.txt"
-downloadGh () {
-    nonInteractiveCurlCheck true
-    if [[ $? == "0" ]]; then
-        curl -LJO --progress-bar $1
-        res=$?
-        if test "$res" != "0"; then
-            echo -e "$error curl failed with: $res"
-            exit $res
+# Checks if we are running on Darwin (macOS/iOS). Returns 0 if we are, else returns 1.
+checkAreWeOnDarwin () {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Checks if we are running on some type of Linux. Returns 0 if we are, else returns 1.
+checkAreWeOnLinux () {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+## Checks if we are running on jailbroken iOS. Returns 0 if we are, else returns 1.
+# Checks using the presence of apt, so this might trigger on Procursus-strapped macOS. not my problem tho :trolley:
+checkAreWeOnJbIos () {
+    checkAreWeOnDarwin
+    if test "$?" == "0"; then
+        # we are on darwin, actually check if we are on ios now
+        if [[ "$(sw_vers -productName)" == "iOS" ]]; then
+            return 0
+        else
+            # we are not on ios so stop here
+            return 1
         fi
     else
-        exit 1
+        # we are not even on darwin so stop here
+        return 1
     fi
 }
 
@@ -269,49 +291,5 @@ done
 
 # Start Test
 echo -e "$init Beginning validation functions test"
-echo -e "$info Got IPA file: $ipafile"
-echo -e "$info Got dylib: $dylib"
-echo -e "$info Got output path: $outpath"
-echo "------------------------------------"
-echo -e "$info validateIpa:"
-
-validateIpa $ipafile true
-if [[ $? == "0" ]]; then
-    echo -e "$info IPA is valid! (Interactive)"
-else
-    echo -e "$error IPA is invalid! (Interactive)"
-fi
-
-validateIpa $ipafile
-if [[ $? == "0" ]]; then
-    echo -e "$info IPA is valid!"
-else
-    echo -e "$error IPA is invalid!"
-fi
-
-echo "------------------------------------"
-echo -e "$info validateDylib:"
-
-validateDylib $dylib true
-if [[ $? == "0" ]]; then
-    echo -e "$info dylib is valid! (Interactive)"
-else
-    echo -e "$error dylib is invalid! (Interactive)"
-fi 
-
-validateDylib $dylib
-if [[ $? == "0" ]]; then
-    echo -e "$info dylib is valid!"
-else
-    echo -e "$error dylib is invalid!"
-fi
-
-echo "------------------------------------"
-echo -e "$info validatePath:"
-
-validatePath $outpath
-if [[ $? == "0" ]]; then
-    echo -e "$info Path is valid!"
-else
-    echo -e "$error Path is invalid!"
-fi
+checkAreWeOnJbIos
+echo -e "exited with code $?"
