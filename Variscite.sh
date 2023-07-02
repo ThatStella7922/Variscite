@@ -49,7 +49,7 @@ nonInteractiveAzuleCheck () {
 ## Checks for the Xcode command line tools and doesn't prompt for installation. Returns 1 if Xcode not found, else returns 0.
 # Call with true to make it print an error.
 nonInteractiveXcodeCltCheck () {
-    if ! xcode-select -p 1>/dev/null; then
+    if ! xcode-select -p &>/dev/null; then
         if [[ $1 == "true" ]]; then
             echo -e "$error Variscite couldn't locate the Xcode Command Line Tools."
             echo -e "$info You can install them manually by running xcode-select --install"
@@ -447,7 +447,8 @@ if [ checkAreWeOnMac ]; then
         echo -e "$question Variscite can request the installation of them for you."
         read -p "$(echo -e "$question Continue? y/n: ")" -n 1 -r
         if [[ $REPLY =~ ^[Yy]$ ]];then
-            xcode-select --install
+            xcode-select --install &>/dev/null
+            echo
             echo -e "$info Variscite has requested the installation of Xcode Command Line Tools for you."
             echo -e "$info Once they are installed, just re-run Variscite!"
             exit 0
