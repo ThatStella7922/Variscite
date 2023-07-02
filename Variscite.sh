@@ -486,7 +486,7 @@ elif [[ "$ioscheck" == "0" ]]; then
     nonInteractiveGitCheck
     if [[ $? == "1" ]]; then
         echo -e "$error Variscite couldn't locate git. If it's already installed, make sure that it's in the PATH."
-        echo -e "$error Cannot continue without Azule."
+        echo -e "$error Cannot continue without git."
         echo -e "$info git should be available at your nearest package manager."
         exit 1
     fi
