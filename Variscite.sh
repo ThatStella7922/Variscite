@@ -5,7 +5,7 @@
 ver="2023.0701.0"
 
 # colors
-usecolors="true"
+usecolors="false"
 reset="\033[0m";faint="\033[37m";red="\033[38;5;196m";black="\033[38;5;244m";green="\033[38;5;46m";yellow="\033[38;5;226m";magenta="\033[35m";blue="\033[36m";default="\033[39m"
 # formatting
 bold="\033[1m";resetbold="\033[21m"
@@ -18,7 +18,7 @@ error="${black}${faint}[${reset}${red}${bold}Error${reset}${resetbold}${black}${
 warn="${black}${faint}[${reset}${yellow}!${reset}${black}${faint}]${reset}"
 azule="${black}${faint}[${reset}${blue}Azule${reset}${black}${faint}]${reset}"
 success="${black}${faint}[${reset}${green}√${reset}${black}${faint}]${reset}"
-if [[ usecolors == "false" ]]; then
+if [[ $usecolors == "false" ]]; then
     reset="";faint="";red="";black="";green="";yellow="";magenta="";blue="";default=""
 fi
 
